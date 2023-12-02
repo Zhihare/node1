@@ -14,22 +14,26 @@ program.parse(process.argv);
 const argv = program.opts();
 
 // TODO: рефакторити
-function invokeAction({ action, id, name, email, phone }) {
+async function invokeAction({ action, id, name, email, phone }) {
 	switch (action) {
 		case 'list':
-			listContacts();
+			const list = await listContacts();
+			console.log(list);
 			break;
 
 		case 'get':
-			getContactById(id);
+			const get = await getContactById(id);
+			console.log(get);
 			break;
 
 		case 'add':
-			addContact(name, email, phone);
+			const add = await addContact(name, email, phone);
+			console.log(add);
 			break;
 
 		case 'remove':
-			removeContact(id);
+			const remove = await removeContact(id);
+			console.log(remove);
 			break;
 
 		default:

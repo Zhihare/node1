@@ -5,45 +5,47 @@ import { nanoid } from 'nanoid';
 // contacts.js
 
 
-const contactsPath = path.join('contacts.json');
-const readResult = await fs.readFile(contactsPath);
-const json = JSON.parse(readResult);
+const contactsPath = path.join('db', 'contacts.json');
 
 // TODO: задокументувати кожну функцію
 export async function listContacts() {
-	// ...твій код. Повертає масив контактів.
-	// const readResult = await fs.readFile(contactsPath);
-	// const json = JSON.parse(readResult);
-	return console.log(json);
+	const readResult = await fs.readFile(contactsPath);
+	const json = JSON.parse(readResult);
+	return json
 }
 
 export async function getContactById(contactId) {
 	// ...твій код. Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений.
-	// const readResult = await fs.readFile(contactsPath);
-	// const json = JSON.parse(readResult);
-	const result = json.filter((id) => id.id === contactId);
-	return console.log(result);
+	const json = await listContacts();
+	const result = json.find((id) => id.id === contactId);
+	return result || null;
 }
 
 export async function removeContact(contactId) {
 	// ...твій код. Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений.
+	const json = await listContacts();
 	const index = json.findIndex((el) => el.id === contactId);
-	const removeContact = json.splice(index, 1);
-	const newData = JSON.stringify(json);
-	fs.writeFile(contactsPath, newData, err => {
-		// error checking
-		if (err) throw err;
+	if (index !== -1) {
+		const removeContact = json.splice(index, 1);
+		const newData = JSON.stringify(json);
+		fs.writeFile(contactsPath, newData, err => {
+			// error checking
+			if (err) throw err;
+			console.log("New data added");
+		});
+		return removeContact;
+	} else {
+		return null;
+	}
 
-		console.log("New data added");
-	});
-
-	return console.log(removeContact);
 
 }
 
 
 export async function addContact(name, email, phone) {
 	// ...твій код. Повертає об'єкт доданого контакту. 
+	const json = await listContacts();
+
 	let newContact = {
 		id: nanoid(),
 		name: name,
@@ -58,8 +60,8 @@ export async function addContact(name, email, phone) {
 
 		console.log("New data added");
 	});
-	return console.log(newContact);
+	return newContact;
 }
-// addContact("kldfv", "lkndfv", "340854435");
+
 
 
